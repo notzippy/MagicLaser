@@ -54,7 +54,7 @@ class NetworkConnection extends Connection
             try {
                 (this.acceptChannel = open).bind(new InetSocketAddress(12346));
                 this.mainChannel = this.acceptChannel.accept();
-                NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ((InetSocketAddress)this.mainChannel.getRemoteAddress()).getHostString()));
+                NetworkConnection.LOGGER.info(((InetSocketAddress)this.mainChannel.getRemoteAddress()).getHostString());
                 if (open != null) {
                     open.close();
                 }
@@ -76,8 +76,7 @@ class NetworkConnection extends Connection
             throw new InterruptedException();
         }
         catch (IOException | SecurityException ex2) {
-            final Object o;
-            throw (Connection)this.new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o));
+            throw this.new CloseException(ex2.getMessage());
         }
         this.discoveryThread.interrupt();
         NetworkConnection.LOGGER.info("Open (accept) done.");
@@ -94,7 +93,7 @@ class NetworkConnection extends Connection
                 this.acceptChannel.close();
             }
             catch (IOException ex) {
-                NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+                NetworkConnection.LOGGER.error( ex);
             }
             this.acceptChannel = null;
         }
@@ -103,7 +102,7 @@ class NetworkConnection extends Connection
                 this.mainChannel.close();
             }
             catch (IOException ex2) {
-                NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex2));
+                NetworkConnection.LOGGER.error(ex2);
             }
             this.mainChannel = null;
         }
@@ -121,7 +120,7 @@ class NetworkConnection extends Connection
             throw new InterruptedException();
         }
         catch (IOException ex) {
-            throw (Connection)this.new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+            throw this.new CloseException(ex.getMessage());
         }
         if (read == -1) {
             throw new CloseException("Receive channel closed by engraver.");
@@ -138,14 +137,14 @@ class NetworkConnection extends Connection
             if (this.mainChannel.write(ByteBuffer.wrap(array)) <= 0) {
                 throw new IOException("Could not transmit any data");
             }
-            NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Arrays.toString(array)));
+            NetworkConnection.LOGGER.info(Arrays.toString(array));
         }
         catch (ClosedByInterruptException ex2) {
-            NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Arrays.toString(array)));
+            NetworkConnection.LOGGER.info(Arrays.toString(array));
             throw new InterruptedException();
         }
         catch (IOException ex) {
-            throw (Connection)this.new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;Ljava/lang/String;)Ljava/lang/String;, ex, Arrays.toString(array)));
+            throw this.new CloseException(ex + Arrays.toString(array));
         }
     }
     
@@ -161,15 +160,15 @@ class NetworkConnection extends Connection
             hostString = ((InetSocketAddress)this.mainChannel.getRemoteAddress()).getHostString();
         }
         catch (IOException ex) {
-            NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+            NetworkConnection.LOGGER.error(ex);
         }
         try {
             hostString2 = ((InetSocketAddress)this.mainChannel.getLocalAddress()).getHostString();
         }
         catch (IOException ex2) {
-            NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex2));
+            NetworkConnection.LOGGER.error(ex2);
         }
-        NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, hostString, hostString2));
+        NetworkConnection.LOGGER.info(hostString + hostString2);
     }
     
     @Override
@@ -192,14 +191,14 @@ class NetworkConnection extends Connection
                         if (broadcast == null) {
                             continue;
                         }
-                        final byte[] packData = Connection.packData(2, invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, address.getHostAddress()).getBytes(), false);
+                        final byte[] packData = Connection.packData(2,address.getHostAddress().getBytes(), false);
                         final DatagramPacket p = new DatagramPacket(packData, packData.length, broadcast, 12345);
                         try {
                             datagramSocket.send(p);
-                            NetworkConnection.LOGGER.debug(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, broadcast.getHostAddress(), address.getHostAddress()));
+                            NetworkConnection.LOGGER.debug(broadcast.getHostAddress(), address.getHostAddress());
                         }
                         catch (IOException ex) {
-                            NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/io/IOException;)Ljava/lang/String;, broadcast.getHostAddress(), address.getHostAddress(), ex));
+                            NetworkConnection.LOGGER.error(broadcast.getHostAddress(), address.getHostAddress(), ex);
                         }
                     }
                     try {
@@ -225,15 +224,14 @@ class NetworkConnection extends Connection
             }
         }
         catch (SocketException | SecurityException ex3) {
-            final Object o;
-            NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o));
+            NetworkConnection.LOGGER.error(ex3);
             this.close();
         }
         NetworkConnection.LOGGER.info("Discovery done.");
     }
     
     private static List<InterfaceAddress> getAddresses() {
-        final ArrayList<Object> list = (ArrayList<Object>)new ArrayList<InterfaceAddress>();
+        final ArrayList<InterfaceAddress> list = (ArrayList<InterfaceAddress>)new ArrayList<InterfaceAddress>();
         try {
             final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces.hasMoreElements()) {
@@ -245,12 +243,12 @@ class NetworkConnection extends Connection
                     list.addAll(networkInterface.getInterfaceAddresses());
                 }
                 catch (SocketException ex) {
-                    NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/net/SocketException;)Ljava/lang/String;, ex));
+                    NetworkConnection.LOGGER.error(ex);
                 }
             }
         }
         catch (SocketException ex2) {
-            NetworkConnection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/net/SocketException;)Ljava/lang/String;, ex2));
+            NetworkConnection.LOGGER.error(ex2);
         }
         return (List<InterfaceAddress>)list;
     }
@@ -258,15 +256,13 @@ class NetworkConnection extends Connection
     Future<Boolean> setWifiNetwork(final String s, final String s2) throws EngraverUnreadyException {
         final String s3 = "Set Wi-Fi Network";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw (Connection)this.new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s3));
+            throw this.new EngraverUnreadyException(s3);
         }
-        NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s3));
-        final Object o;
-        final boolean b;
+        NetworkConnection.LOGGER.info(s3);
         return this.writeParseExec.submit(() -> {
-            this.sendCommand(3, invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, s, s2).getBytes(StandardCharsets.US_ASCII));
-            this.wasCommandAcknowledged(3000);
-            NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            this.sendCommand(3,  (s + s2).getBytes(StandardCharsets.US_ASCII));
+            boolean b = this.wasCommandAcknowledged(3000);
+            NetworkConnection.LOGGER.info( s3, b);
             return Boolean.valueOf(b);
         });
     }
@@ -274,15 +270,13 @@ class NetworkConnection extends Connection
     Future<Boolean> resetWifi() throws EngraverUnreadyException {
         final String s = "Reset Wi-Fi";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw (Connection)this.new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw this.new EngraverUnreadyException(s);
         }
-        NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        NetworkConnection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(4);
-            this.wasCommandAcknowledged(1000);
-            NetworkConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(1000);
+            NetworkConnection.LOGGER.info( b);
             return Boolean.valueOf(b);
         });
     }

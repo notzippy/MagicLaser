@@ -125,10 +125,10 @@ public class ParseHPGL
                 }
             }
             catch (StringIndexOutOfBoundsException ex) {
-                ParseHPGL.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, trim));
+                ParseHPGL.LOGGER.error(trim, ex);
             }
             catch (NumberFormatException ex2) {
-                ParseHPGL.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, trim));
+                ParseHPGL.LOGGER.error(trim,ex2);
             }
         }
         if (b2) {

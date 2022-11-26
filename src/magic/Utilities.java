@@ -109,13 +109,13 @@ public class Utilities
     
     public static void linkListener(final HyperlinkEvent hyperlinkEvent) {
         if (HyperlinkEvent.EventType.ACTIVATED.equals(hyperlinkEvent.getEventType())) {
-            Utilities.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/net/URL;)Ljava/lang/String;, hyperlinkEvent.getURL()));
+            Utilities.LOGGER.info(hyperlinkEvent.getURL());
             final Desktop desktop = Desktop.getDesktop();
             try {
                 desktop.browse(hyperlinkEvent.getURL().toURI());
             }
             catch (Exception ex) {
-                Utilities.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/net/URL;Ljava/lang/Exception;)Ljava/lang/String;, hyperlinkEvent.getURL(), ex));
+                Utilities.LOGGER.error(hyperlinkEvent.getURL(), ex);
             }
         }
     }
@@ -147,7 +147,7 @@ public class Utilities
         }
         
         static {
-            $VALUES = $values();
+            //$VALUES = $values();
         }
     }
 }

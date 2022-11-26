@@ -48,7 +48,7 @@ abstract class Connection
     int printProgress;
     protected Magic gui;
     protected int maxTestHelloCount;
-    private byte[] receiveBuffer;
+    final private byte[] receiveBuffer;
     private int receiveLength;
     private Thread openThread;
     private ExecutorService readExec;
@@ -63,11 +63,10 @@ abstract class Connection
         this.maxTestHelloCount = 4;
         this.receiveBuffer = new byte[4];
         this.receiveLength = 0;
-        final long n;
         this.heartbeatChecker = (() -> {
-            TimeUnit.SECONDS.convert(System.nanoTime() - this.lastHeartbeat, TimeUnit.NANOSECONDS);
+            long n = TimeUnit.SECONDS.convert(System.nanoTime() - this.lastHeartbeat, TimeUnit.NANOSECONDS);
             if (n >= 21L) {
-                Connection.LOGGER.warn(invokedynamic(makeConcatWithConstants:(J)Ljava/lang/String;, n));
+                Connection.LOGGER.warn(n);
                 this.close();
             }
             else if (n >= 7L) {
@@ -77,7 +76,7 @@ abstract class Connection
                         this.receiveLength = 0;
                         this.sendCommand(11);
                     }
-                    Connection.LOGGER.debug(invokedynamic(makeConcatWithConstants:(Z)Ljava/lang/String;, this.wasCommandAcknowledged(1000)));
+                    Connection.LOGGER.debug("Command: Heartbeat Ack",this.wasCommandAcknowledged(1000));
                 }
                 catch (InterruptedException ex) {
                     Connection.LOGGER.info("Heartbeat check interrupted.");
@@ -105,7 +104,7 @@ abstract class Connection
     void open() {
         this.connectionState = ConnectionState.INITIALIZED;
         this.gui.updateFrameConnectionState();
-        int i = 0;
+
         (this.openThread = new Thread(() -> {
             while (this.connectionState != ConnectionState.CONNECTED) {
                 try {
@@ -113,17 +112,18 @@ abstract class Connection
                         this.initializedCallback();
                     }
                     catch (Exception ex) {
-                        Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+                        Connection.LOGGER.error(ex);
                     }
                     this.getCandidate();
                     this.readExec = Executors.newSingleThreadExecutor();
                     this.writeParseExec = Executors.newSingleThreadScheduledExecutor();
                     try {
-                        this.readExec.execute(() -> this.read());
+                        this.readExec.execute(this::read);
                     }
                     catch (RejectedExecutionException ex6) {
                         throw new CloseException("Receive executor service closed, somehow.");
                     }
+                    int i = 0;
                     while (i < this.maxTestHelloCount) {
                         try {
                             if (this.hello().get()) {
@@ -131,7 +131,7 @@ abstract class Connection
                             }
                         }
                         catch (ExecutionException ex2) {
-                            throw new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex2.getCause().getMessage()));
+                            throw new CloseException(ex2.getCause().getMessage());
                         }
                         ++i;
                     }
@@ -149,13 +149,13 @@ abstract class Connection
                     }
                 }
                 catch (RetryException ex3) {
-                    Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex3.getMessage()));
+                    Connection.LOGGER.info(ex3.getMessage());
                     this.undoOpen();
                     continue;
                 }
                 catch (CloseException ex4) {
                     this.connectionState = ConnectionState.CLOSING;
-                    Connection.LOGGER.warn(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex4.getMessage()));
+                    Connection.LOGGER.warn(ex4.getMessage());
                     this.undoOpen();
                     this.connectionState = ConnectionState.DISCONNECTED;
                 }
@@ -165,7 +165,7 @@ abstract class Connection
                 }
                 catch (Exception ex5) {
                     this.connectionState = ConnectionState.CLOSING;
-                    Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex5));
+                    Connection.LOGGER.error(ex5);
                     this.undoOpen();
                     this.connectionState = ConnectionState.DISCONNECTED;
                 }
@@ -197,7 +197,7 @@ abstract class Connection
                 Connection.LOGGER.info("Closing was interrupted, but we ignore it.");
             }
             catch (InvocationTargetException ex) {
-                Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex.getCause().getMessage()));
+                Connection.LOGGER.info(ex.getCause().getMessage());
             }
         }
         new Thread(() -> {
@@ -238,7 +238,7 @@ abstract class Connection
             this.undoCandidate();
         }
         catch (Exception ex) {
-            Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            Connection.LOGGER.error(ex);
         }
     }
     
@@ -251,7 +251,7 @@ abstract class Connection
                 receive = this.receive(array);
             }
             catch (CloseException ex) {
-                Connection.LOGGER.warn(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex.getMessage()));
+                Connection.LOGGER.warn(ex.getMessage());
                 this.close();
                 return;
             }
@@ -260,7 +260,7 @@ abstract class Connection
                 return;
             }
             catch (Exception ex2) {
-                Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex2));
+                Connection.LOGGER.error(ex2);
                 this.close();
                 return;
             }
@@ -297,7 +297,7 @@ abstract class Connection
                                         break;
                                     }
                                     SwingUtilities.invokeLater(() -> this.gui.updateFrameEngraverState());
-                                    Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, this.printProgress));
+                                    Connection.LOGGER.info(this.printProgress);
                                     break;
                                 }
                                 case -1: {
@@ -308,7 +308,7 @@ abstract class Connection
                                     break;
                                 }
                                 default: {
-                                    Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Arrays.toString(this.receiveBuffer)));
+                                    Connection.LOGGER.error(Arrays.toString(this.receiveBuffer));
                                     break;
                                 }
                             }
@@ -327,10 +327,10 @@ abstract class Connection
             array = this.getIdentifier().get();
         }
         catch (ExecutionException ex) {
-            throw new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex.getCause().getMessage()));
+            throw new CloseException(ex.getCause().getMessage());
         }
         catch (EngraverUnreadyException ex2) {
-            throw new CloseException(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex2));
+            throw new CloseException(ex2.getMessage());
         }
         if (array[0] != -1) {
             try {
@@ -342,11 +342,11 @@ abstract class Connection
             }
             catch (IOException ex3) {
                 SwingUtilities.invokeLater(() -> Utilities.error("Couldn't Load Engraver", ex3.getMessage()));
-                throw new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex3));
+                throw new CloseException(ex3.getMessage());
             }
             catch (NumberFormatException ex4) {
-                SwingUtilities.invokeLater(() -> Utilities.error("Bad Engraver Properties File", invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex4.getMessage())));
-                throw new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/lang/NumberFormatException;)Ljava/lang/String;, ex4));
+                SwingUtilities.invokeLater(() -> Utilities.error("Bad Engraver Properties File", ex4.getMessage()));
+                throw new CloseException(ex4.getMessage());
             }
             this.connectionState = ConnectionState.CONNECTED;
             this.engraverState = EngraverState.IDLE;
@@ -355,7 +355,7 @@ abstract class Connection
                 this.connectedCallback();
             }
             catch (Exception ex5) {
-                throw new CloseException(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex5));
+                throw new CloseException(ex5.getMessage());
             }
             SwingUtilities.invokeLater(() -> {
                 this.gui.updateFrameConnection();
@@ -381,7 +381,7 @@ abstract class Connection
             this.undoCallbacks();
         }
         catch (Exception ex) {
-            Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            Connection.LOGGER.error(ex.getMessage());
         }
         this.engraver = null;
     }
@@ -399,11 +399,11 @@ abstract class Connection
             this.transmit(packData(n, array, b));
         }
         catch (CloseException ex) {
-            Connection.LOGGER.warn(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, ex.getMessage()));
+            Connection.LOGGER.warn(ex.getMessage());
             this.close();
         }
         catch (Exception ex2) {
-            Connection.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex2));
+            Connection.LOGGER.error(ex2);
             this.close();
         }
     }
@@ -437,7 +437,14 @@ abstract class Connection
         } while (!b && System.nanoTime() < n2);
         return false;
     }
-    
+
+    /**
+     * Returns true if the engraver returned the identifier, result is placed into the this.receiveBuffer
+     * @param array
+     * @param n
+     * @return
+     * @throws InterruptedException
+     */
     protected boolean wasIdentifierSent(final byte[] array, final int n) throws InterruptedException {
         boolean b = false;
         final long n2 = System.nanoTime() + TimeUnit.NANOSECONDS.convert(n, TimeUnit.MILLISECONDS);
@@ -476,28 +483,29 @@ abstract class Connection
     private Future<Byte[]> getIdentifier() throws EngraverUnreadyException {
         final String s = "Get Identifier";
         if (this.connectionState == ConnectionState.DISCONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        final byte[] array;
-        final Byte[] array2;
-        final byte[] array3;
-        int length;
-        int i = 0;
-        byte b;
-        int n = 0;
-        final Object o;
-        final int n2;
+//        final byte[] array;
+//        final Byte[] array2;
+//        final byte[] array3;
+//        int length;
+//        int i = 0;
+//        byte b;
+//        int n = 0;
+//        final Object o;
+//        final int n2;
         return this.writeParseExec.submit(() -> {
             this.sendCommand(-1);
-            array = new byte[3];
+            byte[] array = new byte[3];
             if (!this.wasIdentifierSent(array, 2000)) {
                 Connection.LOGGER.error("Couldn't get a proper identifier.");
             }
-            array2 = new Byte[array.length];
-            for (length = array3.length; i < length; ++i) {
-                b = array3[i];
-                n++;
-                o[n2] = Byte.valueOf(b);
+            Byte[] array2 = new Byte[array.length];
+            byte[] array3 = this.receiveBuffer;
+            int i=0;
+            for (int length = array3.length; i < length; ++i) {
+                byte b = array3[i];
+                array2[i] = b;
             }
             return array2;
         });
@@ -506,18 +514,16 @@ abstract class Connection
     Future<Boolean> hello() throws EngraverUnreadyException {
         final String s = "Hello";
         if (this.connectionState == ConnectionState.DISCONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(10);
             }
-            this.wasCommandAcknowledged(2000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(2000);
+            Connection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -525,18 +531,16 @@ abstract class Connection
     Future<Boolean> startReset() throws EngraverUnreadyException {
         final String s = "Start Reset";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(6);
             }
-            this.wasCommandAcknowledged(2000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(2000);
+            Connection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -544,18 +548,16 @@ abstract class Connection
     Future<Boolean> stopReset() throws EngraverUnreadyException {
         final String s = "Stop Reset";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(7);
             }
-            this.wasCommandAcknowledged(2000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(2000);
+            Connection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -563,33 +565,33 @@ abstract class Connection
     Future<Boolean> startPreview(final Rectangle rectangle) throws EngraverUnreadyException {
         final String s = "Start Preview";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        int n;
-        int n2;
-        byte[] array;
-        final boolean b;
-        final Object o;
+        Connection.LOGGER.info(s);
+//        int n;
+//        int n2;
+        //byte[] array;
+//        final boolean b;
+//        final Object o;
         return this.writeParseExec.submit(() -> {
             if (rectangle == null || (rectangle.width < 2 && rectangle.height < 2)) {
                 return Boolean.valueOf(false);
             }
             else {
-                n = rectangle.x + rectangle.width / 2;
-                n2 = rectangle.y + rectangle.height / 2;
-                array = new byte[] { (byte)(rectangle.width >> 8), (byte)rectangle.width, (byte)(rectangle.height >> 8), (byte)rectangle.height, (byte)(n >> 8), (byte)n, (byte)(n2 >> 8), (byte)n2 };
+                int n = rectangle.x + rectangle.width / 2;
+                int n2 = rectangle.y + rectangle.height / 2;
+                byte[] array = new byte[] { (byte)(rectangle.width >> 8), (byte)rectangle.width, (byte)(rectangle.height >> 8), (byte)rectangle.height, (byte)(n >> 8), (byte)n, (byte)(n2 >> 8), (byte)n2 };
                 synchronized (this.receiveBuffer) {
                     this.receiveLength = 0;
                     this.sendCommand(32, array);
                 }
-                this.wasCommandAcknowledged(1000);
+                boolean b = this.wasCommandAcknowledged(1000);
                 if (b) {
                     this.engraverState = EngraverState.PREVIEWING;
                     this.printProgress = 0;
                     SwingUtilities.invokeAndWait(() -> this.gui.updateFrameEngraverState());
                 }
-                Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+                Connection.LOGGER.info(rectangle.toString(), b);
                 return Boolean.valueOf(b);
             }
         });
@@ -598,11 +600,9 @@ abstract class Connection
     Future<Boolean> stopPreview() throws EngraverUnreadyException {
         final String s = "Stop Preview";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final boolean b;
-        final Object o;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
@@ -613,13 +613,13 @@ abstract class Connection
                 this.receiveLength = 0;
                 this.sendCommand(33);
             }
-            this.wasCommandAcknowledged(1000);
+            boolean b = this.wasCommandAcknowledged(1000);
             if (b) {
                 this.engraverState = EngraverState.IDLE;
                 this.printProgress = 0;
                 SwingUtilities.invokeAndWait(() -> this.gui.updateFrameEngraverState());
             }
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            Connection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -627,93 +627,84 @@ abstract class Connection
     Future<Boolean> setPreviewPowerResolution(final int n, final int n2) throws EngraverUnreadyException {
         final String s = "Set Preview Power & Resolution";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final byte[] array;
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
-            array = new byte[] { (byte)n, (byte)n2 };
+            byte[] array = new byte[] { (byte)n, (byte)n2 };
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(40, array);
             }
-            this.wasCommandAcknowledged(1000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
-            return Boolean.valueOf(b);
+            boolean b = this.wasCommandAcknowledged(1000);
+            Connection.LOGGER.info(s, b);
+            return b;
         });
     }
     
     Future<Boolean> sendPrintMetadata(final int n, final int n2, final int n3, final int n4, final int n5, final int n6, final int n7, final int n8, final int n9, final int n10, final int n11, final int n12, final int n13, final int n14, final int n15, final int n16) throws EngraverUnreadyException {
         final String s = "Send Print Data";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final byte[] array;
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
-            array = new byte[] { (byte)(n >> 8), (byte)n, (byte)n2, (byte)(n3 >> 8), (byte)n3, (byte)(n4 >> 8), (byte)n4, (byte)(n5 >> 8), (byte)n5, (byte)(n6 >> 8), (byte)n6, (byte)(n7 >> 8), (byte)n7, (byte)(n8 >> 8), (byte)n8, (byte)(n9 >> 8), (byte)n9, (byte)(n10 >> 24), (byte)(n10 >> 16), (byte)(n10 >> 8), (byte)n10, (byte)(n11 >> 8), (byte)n11, (byte)(n12 >> 8), (byte)n12, (byte)(n13 >> 24), (byte)(n13 >> 16), (byte)(n13 >> 8), (byte)n13, (byte)(n14 >> 8), (byte)n14, (byte)(n15 >> 8), (byte)n15, (byte)n16, 0 };
+            byte[] array = new byte[] { (byte)(n >> 8), (byte)n, (byte)n2, (byte)(n3 >> 8), (byte)n3, (byte)(n4 >> 8), (byte)n4, (byte)(n5 >> 8), (byte)n5, (byte)(n6 >> 8), (byte)n6, (byte)(n7 >> 8), (byte)n7, (byte)(n8 >> 8), (byte)n8, (byte)(n9 >> 8), (byte)n9, (byte)(n10 >> 24), (byte)(n10 >> 16), (byte)(n10 >> 8), (byte)n10, (byte)(n11 >> 8), (byte)n11, (byte)(n12 >> 8), (byte)n12, (byte)(n13 >> 24), (byte)(n13 >> 16), (byte)(n13 >> 8), (byte)n13, (byte)(n14 >> 8), (byte)n14, (byte)(n15 >> 8), (byte)n15, (byte)n16, 0 };
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(35, array);
             }
-            this.wasMetadataAcknowledged(70 * n + 5000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
-            return Boolean.valueOf(b);
+            boolean b = this.wasMetadataAcknowledged(70 * n + 5000);
+            Connection.LOGGER.info(s, b);
+            return b;
         });
     }
     
     Future<Boolean> sendPrintChunk(final byte[] array) throws EngraverUnreadyException {
         final String s = "Send Print Chunk";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             synchronized (this.receiveBuffer) {
                 this.receiveLength = 0;
                 this.sendCommand(34, array, true);
             }
-            this.wasCommandAcknowledged(1000);
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
-            return Boolean.valueOf(b);
+            boolean b = this.wasCommandAcknowledged(1000);
+            Connection.LOGGER.info(s, b);
+            return b;
         });
     }
     
     Future<Boolean> startPrint() throws EngraverUnreadyException {
         final String s = "Start Print";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+        Connection.LOGGER.info(s);
         final Object o;
         return this.writeParseExec.submit(() -> {
             this.sendCommand(36);
             this.engraverState = EngraverState.PRINTING;
             this.printProgress = 0;
             SwingUtilities.invokeAndWait(() -> this.gui.updateFrameEngraverState());
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, o));
-            return Boolean.valueOf(true);
+            Connection.LOGGER.info(s);
+            return true;
         });
     }
     
     Future<Boolean> pausePrint() throws EngraverUnreadyException {
         final String s = "Pause Print";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(24);
             this.engraverState = EngraverState.PAUSED;
             SwingUtilities.invokeAndWait(() -> this.gui.updateFrameEngraverState());
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, o));
+            Connection.LOGGER.info(s);
             return Boolean.valueOf(true);
         });
     }
@@ -721,15 +712,14 @@ abstract class Connection
     Future<Boolean> resumePrint() throws EngraverUnreadyException {
         final String s = "Resume Print";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
+        Connection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(25);
             this.engraverState = EngraverState.PRINTING;
             SwingUtilities.invokeAndWait(() -> this.gui.updateFrameEngraverState());
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, o));
+            Connection.LOGGER.info(s);
             return Boolean.valueOf(true);
         });
     }
@@ -737,23 +727,22 @@ abstract class Connection
     Future<Boolean> stopPrint(final boolean b) throws EngraverUnreadyException {
         final String s = "Stop Print";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b2;
+        Connection.LOGGER.info( s);
         return this.writeParseExec.submit(() -> {
+            boolean b2=false;
             if (b) {
                 synchronized (this.receiveBuffer) {
                     this.receiveLength = 0;
                     this.sendCommand(22);
                 }
-                this.wasCommandAcknowledged(2000);
-                Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b2));
+                b2 = this.wasCommandAcknowledged(2000);
+                Connection.LOGGER.info( s, b2);
             }
             else {
                 this.sendCommand(22);
-                Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, o));
+                Connection.LOGGER.info(s);
             }
             if (b2) {
                 this.engraverState = EngraverState.IDLE;
@@ -767,13 +756,13 @@ abstract class Connection
     Future<Boolean> adjustPowerDepth(final int n, final int n2) throws EngraverUnreadyException {
         final String s = "Adjust Power & Depth";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw new EngraverUnreadyException(s);
         }
-        Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+        Connection.LOGGER.info(s);
         final Object o;
         return this.writeParseExec.submit(() -> {
             this.sendCommand(37, new byte[] { (byte)(n2 >> 8), (byte)n2, (byte)(n >> 8), (byte)n });
-            Connection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, o));
+            Connection.LOGGER.info(s);
             return Boolean.valueOf(true);
         });
     }
@@ -794,7 +783,7 @@ abstract class Connection
         }
         
         static {
-            $VALUES = $values();
+            // $VALUES = $values();
         }
     }
     
@@ -813,7 +802,7 @@ abstract class Connection
         }
         
         static {
-            $VALUES = $values();
+            // $VALUES = $values();
         }
     }
     

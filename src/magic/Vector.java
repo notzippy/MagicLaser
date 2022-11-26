@@ -211,7 +211,7 @@ class Vector extends CanvasObject
         transformedPath.setWindingRule(0);
         BufferedImage read = new BufferedImage(1, 1, 1);
         try {
-            read = ImageIO.read(Utilities.getResource(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, this.fillDensity)));
+            read = ImageIO.read(Utilities.getResource(""+this.fillDensity));
         }
         catch (IOException ex) {}
         graphics.setPaint(new TexturePaint(read, new Rectangle(0, 0, 10, 11 - this.fillDensity)));
@@ -236,7 +236,7 @@ class Vector extends CanvasObject
         }
         
         static {
-            $VALUES = $values();
+            //$VALUES = $values();
         }
     }
 }

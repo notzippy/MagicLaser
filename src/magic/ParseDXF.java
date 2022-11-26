@@ -55,17 +55,18 @@ public class ParseDXF
             }
         }
         catch (ParseException ex) {
-            ParseDXF.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lorg/kabeja/parser/ParseException;)Ljava/lang/String;, ex));
+            ParseDXF.LOGGER.error(ex);
             return null;
         }
         final Iterator dxfLayerIterator = defaultParser.getDocument().getDXFLayerIterator();
         final VectorPath vectorPath = new VectorPath();
         boolean b = false;
         while (dxfLayerIterator.hasNext()) {
-            final DXFLayer dxfLayer = dxfLayerIterator.next();
+            final DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
             final Iterator dxfEntityTypeIterator = dxfLayer.getDXFEntityTypeIterator();
             while (dxfEntityTypeIterator.hasNext()) {
-                for (final DXFEntity dxfEntity : dxfLayer.getDXFEntities((String)dxfEntityTypeIterator.next())) {
+                for (final Object entity : dxfLayer.getDXFEntities((String)dxfEntityTypeIterator.next())) {
+                    final DXFEntity dxfEntity = (DXFEntity) entity;
                     final String type = dxfEntity.getType();
                     switch (type) {
                         case "SPLINE": {
@@ -164,11 +165,11 @@ public class ParseDXF
         final Iterator vertexIterator = dxfPolyline.getVertexIterator();
         final VectorPath vectorPath = new VectorPath();
         if (vertexIterator.hasNext()) {
-            final DXFVertex dxfVertex = vertexIterator.next();
+            final DXFVertex dxfVertex = (DXFVertex) vertexIterator.next();
             vectorPath.moveTo(dxfVertex.getX(), -dxfVertex.getY());
         }
         while (vertexIterator.hasNext()) {
-            final DXFVertex dxfVertex2 = vertexIterator.next();
+            final DXFVertex dxfVertex2 = (DXFVertex) vertexIterator.next();
             vectorPath.lineTo(dxfVertex2.getX(), -dxfVertex2.getY());
         }
         if (dxfPolyline.isClosed()) {

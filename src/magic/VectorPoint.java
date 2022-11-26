@@ -4,6 +4,8 @@
 
 package magic;
 
+import org.apache.logging.log4j.util.Strings;
+
 import java.util.List;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ class VectorPoint
     
     @Override
     public String toString() {
-        return invokedynamic(makeConcatWithConstants:(II)Ljava/lang/String;, this.x, this.y);
+        return Strings.concat("" +this.x , ""+this.y);
     }
     
     public double getDistanceTo(final VectorPoint vectorPoint) {

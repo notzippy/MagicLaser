@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <style>
+      h2, h3 {
+        margin-bottom: 0px;
+        margin-top: 12px;
+      }
+      p {
+        margin-bottom: 0px;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Supported File Formats</h2>
+    <p>Projects are saved as a file with the extension .mag.</p>
+    <p>You can import .jpg, .jpeg, .png, .gif, and .bmp files as rasters.</p>
+    <p>You can import .svg, .dxf, .plt, and .hpgl files as vectors.</p>
+    <h2>How to Connect to an Engraver</h2>
+    <p>Click the Wi-Fi or USB buttons (or use the Engraver menu) to connect to an engraver.</p>
+    <p>To connect using Wi-Fi to your engraver for the first time, create a Wi-Fi hotspot with any name and the password <b><i>aaaabbbb</i></b>. Then connect this computer to the hotspot, click the Wi-Fi button (or menu item), and wait until the engraver connects to the hotspot as well (might take a few minutes if there are lots of networks around, since it will try all of them one by one until finding the one where the password <b><i>aaaabbbb</i></b> works) and the program makes a connection to it.</p>
+    <p>Once connected to the engraver over Wi-Fi, you can set/change the normal Wi-Fi network the engraver connects to (or reset it back to "connect to hotspot" mode) using the sidebar <b>Wi-Fi Settings</b> section.</p>
+    <p>(Although the network-enabled engravers all use Wi-Fi to connect, this computer itself can be connected over Ethernet.)</p>
+    <h2>How to Navigate the Canvas</h2>
+    <p>You can pan around the canvas by right-clicking and dragging.</p>
+    <p>You can zoom in and out of the canvas by pinching in and out (Mac) or scrolling using the middle wheel (Windows).</p>
+    <p>You can use the menu bar for most actions. Their corresponding keyboard shortcuts are listed next to them.</p>
+    <h2>How to Select and Deselect on the Canvas</h2>
+    <p>Click on an object to select it. Shift/Command/Control + Click on an object to deselect it.</p>
+    <p>Shift/Command/Control + Click on an object to add it to or remove it from the selection.</p>
+    <p>Drag on the canvas to select objects. Shift/Command/Control + Drag on the canvas to do an inverse select.</p>
+    <h2>Objects</h2>
+    <p>An object on the canvas can be either a raster or a vector. All objects will be printed exactly as they are shown on the canvas (WYSIWYG). Rasters are usually engraved first, followed by vectors, followed by the vector fillings. You can see a detailed breakdown of how the current canvas will be printed by using the <b>Preview Print</b> button or menu item.</p>
+    <h3>Rasters</h3>
+    <p>A raster is a regular image that will be engraved using the engraving mode (side-to-side, slowly). You can adjust the contrast of a raster, apply a filter to it, or invert its colors, all using the sidebar or menu bar. The "Outline" filter will convert a raster into a vector.</p>
+    <p>Rasters are shown in <b>Black</b> on the canvas.
+    <h3>Vectors</h3>
+    <p>A vector is an object whose lines will be cut using the cutting mode (laser following the vector lines, quickly). You can fill in a vector using the fill button, causing the laser to cut horizontal vector lines inside the vector shape, and adjust the density of these filling lines (spacing between them). You can import vectors using the HPGL/PLT format. Vectors cuts can be repeated during the same print using the sidebar "Repeats" option.</p>
+    <p>Vectors are shown in <b style="color:blue">Blue</b> on the canvas.
+    <h2>Job Settings</h2>
+    <p><b>Resolution</b> indicates the real-life value of each pixel on the canvas. Zoom in to view the pixels.</p>
+    <p><b>Preview Power</b> indicates the brightness of the laser shown when the engraver is idle or previewing position. Be careful: this should generally not be set higher than 10%.</p>
+    <p><b>Rasters</b> > <b>Power</b> indicates the brightness of the laser when engraving rasters. Rasters are engraved like a printer, side-to-side, slowly.</p>
+    <p><b>Rasters</b> > <b>Depth</b> indicates how slowly the laser will move when engraving. The higher the depth, the slower the laser will move, and deeper the cut.</p>
+    <p><b>Vectors</b> > <b>Power</b> indicates the brightness of the laser when cutting cetors. Vectors are cut following their lines, quickly.</p>
+    <p><b>Vectors</b> > <b>Depth</b> indicates how slowly the laser will move when cutting. The higher the depth, the slower the laser will move, and deeper the cut.</p>
+    <p><b>Vectors</b> > <b>Repeats</b> indicates how many times the vector will be cut in one print. You can set this up to 255 per print to cut through thicker material faster, though generally the laser's depth of field limit will be reached long before the 255 limit, meaning if the material is too thick to cut, the laser will become out of focus as the cutting surface gets lower and lower, losing its focused cutting efficacy. Generally, a </p>
+    <h3>Live Preview Position</h3>
+    <p>While previewing the position of the objects you want to print (using the Preview Position button or menu item), you can adjust the position previewed by the engraver live, in real time, by just moving objects on the canvas. The enclosing box previewed by the laser will automatically change to indicate the new canvas positions once the mouse is released.</p>
+    <h3>Live Adjust Power & Depth</h3>
+    <p>You can adjust the power and depth in the middle of a print by just dragging the power and depth sliders (either raster or vector). However, this does not actually differentiate between raster engraving and vector cutting; it will adjust the laser for whatever is happening at the moment.</p>
+    <h3>Setting Canvas Engraver Model</h3>
+    <p>You can set the canvas's engraver model without having to connect to an engraver first. Use the dropdown at the bottom right. If the currently selected canvas engraver does not match the connected engraver, the dropdown text will be red, and the correct engraver will show up as green in the dropdown list. If the currently selected canvas engraver does match the connected engraver, the dropdown text will be green.</p>
+  </body>
+</html>

@@ -57,7 +57,7 @@ public class ImagePreviewPanel extends JPanel implements PropertyChangeListener
                 this.repaint();
             }
             catch (IOException ex) {
-                ImagePreviewPanel.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/io/IOException;)Ljava/lang/String;, absolutePath, ex));
+                ImagePreviewPanel.LOGGER.error(absolutePath, ex);
             }
         }
     }

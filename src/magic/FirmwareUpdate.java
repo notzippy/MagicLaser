@@ -104,7 +104,7 @@ public class FirmwareUpdate extends JFrame
             httpURLConnection.setRequestMethod("GET");
             final int responseCode = httpURLConnection.getResponseCode();
             if (responseCode == 200) {
-                final String name = invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, System.getProperty("java.io.tmpdir"));
+                final String name = System.getProperty("java.io.tmpdir");
                 final InputStream inputStream = httpURLConnection.getInputStream();
                 try {
                     final FileOutputStream fileOutputStream = new FileOutputStream(name, false);
@@ -116,7 +116,7 @@ public class FirmwareUpdate extends JFrame
                                 throw new InterruptedException();
                             }
                             n += read;
-                            FirmwareUpdate.LOGGER.debug(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, n));
+                            FirmwareUpdate.LOGGER.debug(n);
                             fileOutputStream.write(array, 0, read);
                         }
                         final String s = name;
@@ -148,17 +148,15 @@ public class FirmwareUpdate extends JFrame
                     throw t2;
                 }
             }
-            FirmwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;, Magic.str_download_failed, spec, responseCode));
-            SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, invokedynamic(makeConcatWithConstants:(Ljava/lang/String;I)Ljava/lang/String;, spec, responseCode)));
+            FirmwareUpdate.LOGGER.error(Magic.str_download_failed, spec, responseCode);
+            SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, spec + responseCode));
         }
         catch (IOException | SecurityException ex2) {
-            final Object o;
-            FirmwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/Exception;)Ljava/lang/String;, Magic.str_download_failed, o));
-            final SecurityException ex;
-            SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, ex.getMessage()));
+            FirmwareUpdate.LOGGER.error(Magic.str_download_failed, ex2);
+            SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, ex2.getMessage()));
         }
-        FirmwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, Magic.str_download_failed, spec));
-        SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, spec)));
+        FirmwareUpdate.LOGGER.error(Magic.str_download_failed + spec);
+        SwingUtilities.invokeLater(() -> Utilities.error(Magic.str_download_failed, spec));
         return "";
     }
     
@@ -177,7 +175,7 @@ public class FirmwareUpdate extends JFrame
             int read;
             for (off = 0; off < b.length && (read = fileInputStream.read(b, off, b.length - off)) >= 0; off += read) {}
             if (off != b.length) {
-                throw new IOException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, file.getName()));
+                throw new IOException(file.getName());
             }
             fileInputStream.close();
         }
@@ -222,15 +220,16 @@ public class FirmwareUpdate extends JFrame
                 }
                 for (int n2 = 0; n2 < 5 && !this.connection.sendFirmwareChunk(array).get(); ++n2) {
                     if (n2 == 4) {
-                        throw new Exception(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, i + 1));
+                        throw new Exception("" + i + 1);
                     }
                 }
-                SwingUtilities.invokeLater(() -> this.jProgressBar1.setValue((int)((i + 1) / (double)divideRoundUp * 100.0)));
+                int finalI = i;
+                SwingUtilities.invokeLater(() -> this.jProgressBar1.setValue((int)((finalI + 1) / (double)divideRoundUp * 100.0)));
             }
             return true;
         }
         catch (Exception ex) {
-            FirmwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            FirmwareUpdate.LOGGER.error(ex);
             SwingUtilities.invokeLater(() -> Utilities.error("Firmware Update Failed", ex.getMessage()));
             return false;
         }
@@ -240,12 +239,10 @@ public class FirmwareUpdate extends JFrame
         if (this.updateThread != null) {
             this.updateThread.interrupt();
         }
-        final String s2;
-        final ExecutionException ex;
         (this.updateThread = new Thread(() -> {
             try {
                 FirmwareUpdate.LOGGER.info("Downloading firmware.");
-                downloadNet(s);
+                String s2 = downloadNet(s);
                 if (!s2.isEmpty()) {
                     FirmwareUpdate.LOGGER.info("Firmware download successful.");
                     try {
@@ -272,11 +269,11 @@ public class FirmwareUpdate extends JFrame
                 });
             }
             catch (MalformedURLException | Connection.EngraverUnreadyException | ExecutionException ex3) {
-                FirmwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
-                SwingUtilities.invokeLater(() -> Utilities.error("Couldn't Complete Firmware Update", invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex)));
+                FirmwareUpdate.LOGGER.error(ex3);
+                SwingUtilities.invokeLater(() -> Utilities.error("Couldn't Complete Firmware Update", ex3.getMessage()));
             }
             catch (InterruptedException ex4) {
-                FirmwareUpdate.LOGGER.warn("Firmware download interrupted.");
+                FirmwareUpdate.LOGGER.warn("Firmware download interrupted.", ex4);
             }
         }, "Update Firmware")).start();
     }

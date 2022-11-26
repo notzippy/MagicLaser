@@ -42,7 +42,7 @@ public class SoftwareUpdate
             final URLConnection openConnection = new URL(spec).openConnection();
             openConnection.connect();
             if (((HttpURLConnection)openConnection).getResponseCode() != 200) {
-                SoftwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, spec));
+                SoftwareUpdate.LOGGER.error(spec);
             }
             else {
                 openConnection.getContentLength();
@@ -56,7 +56,7 @@ public class SoftwareUpdate
             }
         }
         catch (IOException ex) {
-            SoftwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/io/IOException;)Ljava/lang/String;, spec, ex));
+            SoftwareUpdate.LOGGER.error(spec, ex);
         }
         return string;
     }
@@ -69,7 +69,7 @@ public class SoftwareUpdate
             }
         }
         catch (Exception ex) {
-            SoftwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/Exception;)Ljava/lang/String;, str, ex));
+            SoftwareUpdate.LOGGER.error(str, ex);
         }
     }
     
@@ -85,30 +85,21 @@ public class SoftwareUpdate
             compareTo = ((compareTo != 0) ? compareTo : (split.length - split2.length));
         }
         catch (Exception ex) {
-            SoftwareUpdate.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Exception;)Ljava/lang/String;, s, s2, ex));
+            SoftwareUpdate.LOGGER.error(s, s2, ex);
         }
         return compareTo;
     }
     
     public static void update_mod(final boolean b) {
-        final Preferences preferences;
-        final long n;
-        final long n2;
-        final String[] array;
-        Object[] array2;
-        Object o;
-        final String s;
-        int n3 = 0;
-        final String text;
-        JEditorPane message;
         new Thread(() -> {
-            Utilities.getPreferences();
-            preferences.getLong("last_update", 0L);
-            Instant.now().getEpochSecond();
+            final Preferences preferences = Utilities.getPreferences();
+            final long n = preferences.getLong("last_update", 0L);
+            final long n2 = Instant.now().getEpochSecond();
+            int n3 = 0;
             if (!b || n - n2 >= 172800L) {
                 SoftwareUpdate.LOGGER.info("Checking for update.");
                 preferences.putLong("last_update", n);
-                openFile("https://melik.me/shared/magic/version.txt").split("\r\n");
+                final String[] array = openFile("https://melik.me/shared/magic/version.txt").split("\r\n");
                 if (array.length <= 1) {
                     SoftwareUpdate.LOGGER.error("Couldn't connect to the Magic Laser update server. Try again later.");
                     if (!b) {
@@ -116,8 +107,8 @@ public class SoftwareUpdate
                     }
                 }
                 else {
-                    array2 = new Object[] { "Mac", "Windows", "No" };
-                    o = array2[2];
+                    Object[] array2 = new Object[] { "Mac", "Windows", "No" };
+                    Object o = array2[2];
                     if (!array[0].equals("1")) {
                         SoftwareUpdate.LOGGER.warn("Updates temporarily disabled.");
                         if (!b) {
@@ -125,15 +116,16 @@ public class SoftwareUpdate
                         }
                     }
                     else {
-                        array[1].toLowerCase();
+                        final String s = array[1].toLowerCase();
                         if (compareVersion(s, "v2.1".toLowerCase()) <= 0) {
                             SoftwareUpdate.LOGGER.info("No update found.");
                             if (!b) {
-                                n3 = JOptionPane.showOptionDialog(null, "<html><h2>No update available.</h2><p>You are already running the latest version of Magic Laser (v2.1).</p><p style='margin-top: 10px;'>Do you want to download it again?</p></html>", Magic.str_update, -1, 1, null, array2, o);
+                                n3  = JOptionPane.showOptionDialog(null, "<html><h2>No update available.</h2><p>You are already running the latest version of Magic Laser (v2.1).</p><p style='margin-top: 10px;'>Do you want to download it again?</p></html>", Magic.str_update, -1, 1, null, array2, o);
                             }
                         }
                         else {
-                            SoftwareUpdate.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+
+                            SoftwareUpdate.LOGGER.info(s);
                             switch (Utilities.getOS()) {
                                 case MAC: {
                                     o = array2[0];
@@ -144,8 +136,8 @@ public class SoftwareUpdate
                                     break;
                                 }
                             }
-                            openFile("https://melik.me/shared/magic/changelog.html");
-                            message = new JEditorPane("text/html", text);
+                            final String text = openFile("https://melik.me/shared/magic/changelog.html");
+                            JEditorPane message = new JEditorPane("text/html", text);
                             if (text.isEmpty()) {
                                 message.setText("<html><h2 style='margin: 0px;'>Update available!</h2><p>Would you like to download it?</p></html>");
                             }
@@ -153,15 +145,15 @@ public class SoftwareUpdate
                             message.setOpaque(false);
                             message.putClientProperty("JEditorPane.honorDisplayProperties", Boolean.TRUE);
                             message.addHyperlinkListener(hyperlinkEvent -> Utilities.linkListener(hyperlinkEvent));
-                            n3 = JOptionPane.showOptionDialog((Component)null, (Object)message, invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, Magic.str_update, s), -1, 3, (Icon)null, array2, o);
+                            n3 = JOptionPane.showOptionDialog((Component)null, (Object)message,  Magic.str_update + s, -1, 3, (Icon)null, array2, o);
                         }
                         switch (n3) {
                             case 0: {
-                                browse2(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+                                browse2( s);
                                 break;
                             }
                             case 1: {
-                                browse2(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+                                browse2(s);
                                 break;
                             }
                         }
@@ -172,13 +164,14 @@ public class SoftwareUpdate
     }
     
     public static void geng_xin() {
-        final String[] array;
+
         new Thread(() -> {
-            openFile("http://www.jiakuo25.com/geng_xin.txt").split("\r\n");
+            String[] array = openFile("http://www.jiakuo25.com/geng_xin.txt").split("\r\n");
             if (array.length > 1) {
                 if (!(!array[0].equals("1"))) {
                     if (compareVersion(array[1].toUpperCase(), "v1.1.6".toUpperCase()) > 0) {
-                        if (JOptionPane.showConfirmDialog((Component)null, (Object)"There is an update available for the original software. It will not have the features and fixes of Magic Laser.\nYou can download it now or wait for a corresponding Magic Laser version to come out.\nWould you like to download the original software now?", invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, Magic.str_update, array[1].toLowerCase()), 0) == 0) {
+                        if (JOptionPane.showConfirmDialog((Component)null, (Object)"There is an update available for the original software. It will not have the features and fixes of Magic Laser.\nYou can download it now or wait for a corresponding Magic Laser version to come out.\nWould you like to download the original software now?",
+                                 Magic.str_update + array[1].toLowerCase(), 0) == 0) {
                             switch (Utilities.getOS()) {
                                 case MAC: {
                                     browse2("http://www.jiakuo25.com/Laser_java_mac.zip");

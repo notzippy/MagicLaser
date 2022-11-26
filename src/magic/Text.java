@@ -81,7 +81,7 @@ public class Text extends JDialog
         final JToggleButton toggleButton4 = new JToggleButton();
         final JButton button = new JButton("Insert");
         Text.font = new Font(comboBox.getItemAt(Text.fontFamilyBoxIndex), Text.fontStyle, 40);
-        final Map<TextAttribute, ?> attributes = Text.font.getAttributes();
+        final Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) Text.font.getAttributes();
         attributes.put(TextAttribute.KERNING, (Object)Text.kerning);
         attributes.put(TextAttribute.TRACKING, (Object)Text.tracking);
         viewportView.setFont(Text.font = Text.font.deriveFont(attributes));
@@ -92,19 +92,15 @@ public class Text extends JDialog
         comboBox.setModel(new DefaultComboBoxModel<String>(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
         comboBox.setSelectedIndex(Text.fontFamilyBoxIndex);
         comboBox.setToolTipText(Magic.str_font);
-        String name;
-        final JComboBox comboBox2;
-        final Map<TextAttribute, ?> attributes2;
-        final JTextArea textArea;
         comboBox.addItemListener(itemEvent8 -> {
             if (itemEvent8.getStateChange() == 1) {
-                name = (String)itemEvent8.getItem();
-                Text.fontFamilyBoxIndex = comboBox2.getSelectedIndex();
+                String name = (String)itemEvent8.getItem();
+                Text.fontFamilyBoxIndex = comboBox.getSelectedIndex();
                 Text.font = new Font(name, Text.fontStyle, Text.font.getSize());
-                Text.font.getAttributes();
+                Map<TextAttribute, Object> attributes2 = (Map<TextAttribute, Object>) Text.font.getAttributes();
                 attributes2.put(TextAttribute.KERNING, (Object)Text.kerning);
                 attributes2.put(TextAttribute.TRACKING, (Object)Text.tracking);
-                textArea.setFont(Text.font = Text.font.deriveFont(attributes2));
+                viewportView.setFont(Text.font = Text.font.deriveFont(attributes2));
             }
             return;
         });
@@ -119,7 +115,7 @@ public class Text extends JDialog
         toggleButton.setToolTipText(Magic.str_bold);
         toggleButton.setSelected((Text.fontStyle & 0x1) != 0x0);
         toggleButton.setFocusPainted(false);
-        final JTextArea textArea2;
+
         toggleButton.addItemListener(itemEvent5 -> {
             if (itemEvent5.getStateChange() == 1) {
                 Text.fontStyle |= 0x1;
@@ -127,13 +123,12 @@ public class Text extends JDialog
             else {
                 Text.fontStyle &= 0xFFFFFFFE;
             }
-            textArea2.setFont(Text.font = Text.font.deriveFont(Text.fontStyle));
+            viewportView.setFont(Text.font = Text.font.deriveFont(Text.fontStyle));
             return;
         });
         toggleButton2.setToolTipText(Magic.str_italic);
         toggleButton2.setSelected((Text.fontStyle & 0x2) != 0x0);
         toggleButton2.setFocusPainted(false);
-        final JTextArea textArea3;
         toggleButton2.addItemListener(itemEvent6 -> {
             if (itemEvent6.getStateChange() == 1) {
                 Text.fontStyle |= 0x2;
@@ -141,14 +136,12 @@ public class Text extends JDialog
             else {
                 Text.fontStyle &= 0xFFFFFFFD;
             }
-            textArea3.setFont(Text.font = Text.font.deriveFont(Text.fontStyle));
+            viewportView.setFont(Text.font = Text.font.deriveFont(Text.fontStyle));
             return;
         });
         toggleButton3.setToolTipText("Kerning (Aesthetic Character Overlap)");
         toggleButton3.setSelected(Text.kerning == TextAttribute.KERNING_ON);
         toggleButton3.setFocusPainted(false);
-        final Map<TextAttribute, ?> attributes3;
-        final JTextArea textArea4;
         toggleButton3.addItemListener(itemEvent7 -> {
             if (itemEvent7.getStateChange() == 1) {
                 Text.kerning = TextAttribute.KERNING_ON;
@@ -156,9 +149,9 @@ public class Text extends JDialog
             else {
                 Text.kerning = 0;
             }
-            Text.font.getAttributes();
+            Map<TextAttribute, Object> attributes3 = (Map<TextAttribute, Object>) Text.font.getAttributes();
             attributes3.put(TextAttribute.KERNING, (Object)Text.kerning);
-            textArea4.setFont(Text.font = Text.font.deriveFont(attributes3));
+            viewportView.setFont(Text.font = Text.font.deriveFont(attributes3));
             return;
         });
         slider.setValue(Math.round(Text.tracking * 40.0f));
@@ -166,22 +159,19 @@ public class Text extends JDialog
         slider.setMajorTickSpacing(8);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        slider.setToolTipText(invokedynamic(makeConcatWithConstants:(F)Ljava/lang/String;, Text.tracking));
+        slider.setToolTipText( "" +Text.tracking);
         final Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         labelTable.put(-8, new JLabel("-0.2"));
         labelTable.put(0, new JLabel("0"));
         labelTable.put(16, new JLabel("0.5"));
         slider.setLabelTable(labelTable);
-        final JSlider slider3;
-        final Map<TextAttribute, ?> attributes4;
-        final JTextArea textArea5;
         slider.addChangeListener(p2 -> {
-            if (slider3.getValueIsAdjusting()) {
-                Text.tracking = slider3.getValue() / 40.0f;
-                slider3.setToolTipText(invokedynamic(makeConcatWithConstants:(F)Ljava/lang/String;, Text.tracking));
-                Text.font.getAttributes();
+            if (slider.getValueIsAdjusting()) {
+                Text.tracking = slider.getValue() / 40.0f;
+                slider.setToolTipText("" + Text.tracking);
+                Map<TextAttribute, Object> attributes4 = (Map<TextAttribute, Object>) Text.font.getAttributes();
                 attributes4.put(TextAttribute.TRACKING, (Object)Text.tracking);
-                textArea5.setFont(Text.font = Text.font.deriveFont(attributes4));
+                viewportView.setFont(Text.font = Text.font.deriveFont(attributes4));
             }
             return;
         });
@@ -221,16 +211,15 @@ public class Text extends JDialog
         slider2.setSnapToTicks(true);
         slider2.setPaintTicks(true);
         slider2.setPaintLabels(true);
-        slider2.setToolTipText(invokedynamic(makeConcatWithConstants:(F)Ljava/lang/String;, Text.lineHeightFactor));
+        slider2.setToolTipText("" + Text.lineHeightFactor);
         final Hashtable<Integer, JLabel> labelTable2 = new Hashtable<Integer, JLabel>();
         labelTable2.put(0, new JLabel("0%"));
         labelTable2.put(100, new JLabel("100%"));
         labelTable2.put(200, new JLabel("200%"));
         slider2.setLabelTable(labelTable2);
-        final JSlider slider4;
         slider2.addChangeListener(p1 -> {
-            Text.lineHeightFactor = slider4.getValue() / 100.0f;
-            slider4.setToolTipText(invokedynamic(makeConcatWithConstants:(F)Ljava/lang/String;, Text.lineHeightFactor));
+            Text.lineHeightFactor = slider2.getValue() / 100.0f;
+            slider2.setToolTipText(""+ Text.lineHeightFactor);
             return;
         });
         toggleButton4.setToolTipText(Magic.str_vector);
@@ -255,7 +244,7 @@ public class Text extends JDialog
             toggleButton4.setSelectedIcon(new ImageIcon(new BaseMultiResolutionImage(new Image[] { ImageIO.read(Utilities.getResource("/images/textVectorizeYes.png")), ImageIO.read(Utilities.getResource("/images/textVectorizeYes@2x.png")) })));
         }
         catch (Exception ex) {
-            Text.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            Text.LOGGER.error(ex);
         }
         final GroupLayout layout = new GroupLayout(this.getContentPane());
         layout.setAutoCreateGaps(true);
@@ -363,7 +352,7 @@ public class Text extends JDialog
         }
         
         static {
-            $VALUES = $values();
+            //$VALUES = $values();
         }
     }
 }

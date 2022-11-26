@@ -106,7 +106,7 @@ class SerialConnection extends Connection
                 throw new CloseException("Transmit failed.");
             }
             i += writeBytes;
-            // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(II)Ljava/lang/String;, i, array.length));
+            SerialConnection.LOGGER.info("Transmitted", i, array.length);
         }
     }
     
@@ -128,13 +128,11 @@ class SerialConnection extends Connection
         if (this.connectionState != ConnectionState.CONNECTED) {
             throw this.new EngraverUnreadyException(s);
         }
-        // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        SerialConnection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(-2, new byte[] { 0, 0 }, true);
-            this.wasCommandAcknowledged(1000);
-            // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(1000);
+            SerialConnection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -142,15 +140,13 @@ class SerialConnection extends Connection
     Future<Boolean> startFirmwareUpdate() throws EngraverUnreadyException {
         final String s = "Start Firmware Update";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw (Connection)this.new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw this.new EngraverUnreadyException(s);
         }
-        // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        SerialConnection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(2, new byte[] { 0, 115 });
-            this.wasCommandAcknowledged(1000);
-            // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(1000);
+            SerialConnection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -158,15 +154,13 @@ class SerialConnection extends Connection
     Future<Boolean> sendFirmwareChunk(final byte[] array) throws EngraverUnreadyException {
         final String s = "Send Firmware Chunk";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw (Connection)this.new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw this.new EngraverUnreadyException(s);
         }
-        // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        SerialConnection.LOGGER.info( s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(3, array, true);
-            this.wasCommandAcknowledged(1000);
-            // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(1000);
+            SerialConnection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }
@@ -174,15 +168,13 @@ class SerialConnection extends Connection
     Future<Boolean> restart() throws EngraverUnreadyException {
         final String s = "Restart";
         if (this.connectionState != ConnectionState.CONNECTED) {
-            throw (Connection)this.new EngraverUnreadyException(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+            throw this.new EngraverUnreadyException(s);
         }
-        // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
-        final Object o;
-        final boolean b;
+        SerialConnection.LOGGER.info(s);
         return this.writeParseExec.submit(() -> {
             this.sendCommand(4);
-            this.wasCommandAcknowledged(1000);
-            // TODO SerialConnection.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Z)Ljava/lang/String;, o, b));
+            boolean b = this.wasCommandAcknowledged(1000);
+            SerialConnection.LOGGER.info(s, b);
             return Boolean.valueOf(b);
         });
     }

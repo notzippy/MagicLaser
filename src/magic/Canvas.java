@@ -350,7 +350,7 @@ public class Canvas extends JPanel {
         }
         this.scaleToGridButton.setToolTipText("Scale to Grid");
         this.scaleToGridButton.setMargin(insets);
-        final Rectangle rectangle;
+        final Rectangle rectangle = new Rectangle();
         this.scaleToGridButton.addActionListener(p0 -> {
             this.grid.getBounds();
             if (this.scaleToBoundsSelected(rectangle.width, rectangle.height)) {
@@ -672,9 +672,9 @@ public class Canvas extends JPanel {
         this.engraverDropdown.setFocusable(false);
         this.engraverDropdown.setSelectedItem(this.grid.engraver);
         this.engraverDropdown.setPrototypeDisplayValue(this.grid.engraver);
-        final Engraver engraver;
+
         this.engraverDropdown.addActionListener(p0 -> {
-            engraver = (Engraver) this.engraverDropdown.getSelectedItem();
+            final Engraver engraver = (Engraver) this.engraverDropdown.getSelectedItem();
             this.setEngraver(engraver);
             this.engraverDropdown.setPrototypeDisplayValue(engraver);
             return;
@@ -704,10 +704,12 @@ public class Canvas extends JPanel {
             connection.engraver != null &&
             !this.grid.engraver.equals(connection.engraver) &&
                 (this.rasters.size() > 0 || this.vectors.size() > 0) &&
+
                 JOptionPane.showConfirmDialog(
-                        (Component) null, invokedynamic(makeConcatWithConstants:
-        (Lmagic / Engraver; Lmagic / Engraver;)Ljava / lang / String;,connection.engraver, this.grid.engraver),
-        "Connected vs. Canvas Engraver Model", 0, 3) !=0){
+                        (Component) null,
+                        connection.engraver.toString() +
+                                this.grid.engraver.toString(),
+        "Connected vs. Canvas Engraver Model", 3) !=0){
             return;
         }
         this.setEngraver(connection.engraver);
@@ -887,11 +889,9 @@ public class Canvas extends JPanel {
     private void updateInfobox() {
         Canvas.disableCanvasListeners = true;
         final int n = this.rasters.size() + this.vectors.size();
-        this.objectCountLabel.setText(invokedynamic(makeConcatWithConstants:(ILjava / lang / String;)
-        Ljava / lang / String;,n, (n != 1) ? "s" : ""));
+        this.objectCountLabel.setText(n + ((n != 1) ? "s" : ""));
         if (this.dragSelecting) {
-            this.selectedObjectCountLabel.setText(invokedynamic(makeConcatWithConstants:(I) Ljava / lang / String;,
-            this.preselectedCanvasObjects.size()));
+            this.selectedObjectCountLabel.setText("" + this.preselectedCanvasObjects.size());
             this.objectPositionSubpanel.setVisible(false);
             this.objectSizeSubpanel.setVisible(false);
             this.objectRotationSubpanel.setVisible(false);
@@ -899,7 +899,7 @@ public class Canvas extends JPanel {
             this.vectorSubpanel.setVisible(false);
         } else {
             final int n2 = this.selectedRasters.size() + this.selectedVectors.size();
-            this.selectedObjectCountLabel.setText(invokedynamic(makeConcatWithConstants:(I) Ljava / lang / String;,n2));
+            this.selectedObjectCountLabel.setText("" + n2);
             if (n2 > 0) {
                 final Rectangle selectedBounds = this.getSelectedBounds();
                 this.objectPositionSubpanel.setVisible(true);
@@ -995,11 +995,9 @@ public class Canvas extends JPanel {
                         this.invertButtonSingle.setVisible(false);
                         this.invertButtonMultiple.setVisible(true);
                     } else {
-                        this.widthPercentLabel.setText(invokedynamic(makeConcatWithConstants:(Ljava / lang / String;)
-                        Ljava / lang / String;,Utilities.twoPlacesMax.format(n5 * 100.0)));
+                        this.widthPercentLabel.setText(Utilities.twoPlacesMax.format(n5 * 100.0));
                         this.widthPercentLabel.setEnabled(true);
-                        this.heightPercentLabel.setText(invokedynamic(makeConcatWithConstants:(Ljava / lang / String;)
-                        Ljava / lang / String;,Utilities.twoPlacesMax.format(n6 * 100.0)));
+                        this.heightPercentLabel.setText(Utilities.twoPlacesMax.format(n6 * 100.0));
                         this.heightPercentLabel.setEnabled(true);
                         final boolean visible = n5 != 1.0 || n6 != 1.0;
                         this.restoreSizeButton.setVisible(visible);
@@ -1756,8 +1754,7 @@ public class Canvas extends JPanel {
                 try {
                     this.connection.startPreview(this.getTotalBoundsInGrid());
                 } catch (Connection.EngraverUnreadyException ex) {
-                    Canvas.LOGGER.error(invokedynamic(makeConcatWithConstants:
-                    (Lmagic / Connection$EngraverUnreadyException;)Ljava / lang / String;,ex));
+                    Canvas.LOGGER.error(ex);
                 }
             }
         }
@@ -2005,7 +2002,7 @@ public class Canvas extends JPanel {
             }
 
             static {
-                $VALUES = $values();
+                // $VALUES = $values();
             }
         }
     }

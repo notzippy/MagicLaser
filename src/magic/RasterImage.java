@@ -503,7 +503,7 @@ public class RasterImage
         }
         
         static {
-            $VALUES = $values();
+            //$VALUES = $values();
         }
     }
 }

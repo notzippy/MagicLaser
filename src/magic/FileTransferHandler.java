@@ -39,7 +39,7 @@ class FileTransferHandler extends TransferHandler
             }
         }
         catch (Exception ex) {
-            FileTransferHandler.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            FileTransferHandler.LOGGER.error(ex);
             Utilities.error("Couldn't Open File(s)", ex.getMessage());
         }
         return true;
@@ -47,7 +47,7 @@ class FileTransferHandler extends TransferHandler
     
     public void openFile(final File input) {
         final String absolutePath = input.getAbsolutePath();
-        FileTransferHandler.LOGGER.info(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, absolutePath));
+        FileTransferHandler.LOGGER.info(absolutePath);
         final String lowerCase = absolutePath.substring(absolutePath.lastIndexOf(".") + 1).toLowerCase();
         try {
             final String s = lowerCase;
@@ -153,20 +153,20 @@ class FileTransferHandler extends TransferHandler
                         }
                     }
                     catch (Exception ex) {
-                        FileTransferHandler.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+                        FileTransferHandler.LOGGER.error(ex);
                         Utilities.error("Couldn't Open File", ex.getMessage());
                     }
                     break;
                 }
                 default: {
-                    FileTransferHandler.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, lowerCase));
-                    Utilities.error("Couldn't Import File", invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, lowerCase));
+                    FileTransferHandler.LOGGER.error(lowerCase);
+                    Utilities.error("Couldn't Import File", lowerCase);
                     return;
                 }
             }
         }
         catch (IOException ex2) {
-            FileTransferHandler.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex2));
+            FileTransferHandler.LOGGER.error(ex2);
             Utilities.error("Couldn't Open File", ex2.getMessage());
         }
         if (this.window != null) {
@@ -183,7 +183,7 @@ class FileTransferHandler extends TransferHandler
     public void saveFile(final File file) {
         String lowerCase = file.getPath().toLowerCase();
         if (!lowerCase.substring(lowerCase.length() - 3).equals(".mag")) {
-            lowerCase = invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, lowerCase);
+            lowerCase = lowerCase;
         }
         try {
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(new File(lowerCase)));
@@ -208,7 +208,7 @@ class FileTransferHandler extends TransferHandler
             }
         }
         catch (Exception ex) {
-            FileTransferHandler.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            FileTransferHandler.LOGGER.error(ex);
             Utilities.error("Couldn't Save Project", ex.getMessage());
         }
     }

@@ -5,9 +5,9 @@
 package magic;
 
 import org.apache.logging.log4j.LogManager;
-import java.util.Objects;
+
+import java.util.*;
 import java.io.BufferedReader;
-import java.util.Iterator;
 import java.nio.file.FileSystem;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -16,19 +16,18 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileSystems;
-import java.util.Collections;
-import java.util.ArrayList;
 import java.io.Reader;
-import java.util.Optional;
-import java.util.Properties;
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.List;
+
 import org.apache.logging.log4j.Logger;
 import java.io.Serializable;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class Engraver implements Serializable
 {
+    static final String ENGRAVER_RESOURCE="/engravers/engraver_%d.properties";
     private static final Logger LOGGER;
     private static final long serialVersionUID = 4532452340000L;
     private static List<Engraver> engravers;
@@ -61,7 +60,7 @@ class Engraver implements Serializable
     }
     
     Engraver(final int n) throws IOException, NumberFormatException, NullPointerException {
-        this(Utilities.getResourceAsStream(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, n)));
+        this(Utilities.getResourceAsStream(String.format(ENGRAVER_RESOURCE,n)));
     }
     
     Engraver(final InputStream inStream) throws IOException, NumberFormatException, NullPointerException {
@@ -70,7 +69,7 @@ class Engraver implements Serializable
                 properties.load(inStream);
             }
             catch (IOException ex) {
-                Engraver.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+                Engraver.LOGGER.error(ex);
             }
             return properties;
         }).get());
@@ -82,7 +81,7 @@ class Engraver implements Serializable
                 properties.load(reader);
             }
             catch (IOException ex) {
-                Engraver.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+                Engraver.LOGGER.error(ex);
             }
             return properties;
         }).get());
@@ -141,55 +140,26 @@ class Engraver implements Serializable
             final String s = "/engravers";
             Engraver.engravers = new ArrayList<Engraver>();
             try {
-                final FileSystem fileSystem = FileSystems.newFileSystem(Utilities.getResource(s).toURI(), Collections.emptyMap());
-                try {
-                    for (final Path path : Files.walk(fileSystem.getPath(s, new String[0]), new FileVisitOption[0])) {
-                        if (!Files.isDirectory(path, new LinkOption[0])) {
-                            final Optional<String> extension = Utilities.getExtension(path);
-                            if (!extension.isPresent() || !extension.get().equals("properties")) {
-                                continue;
-                            }
-                            new Properties().load(Files.newBufferedReader(path, StandardCharsets.UTF_8));
-                            final BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
-                            try {
-                                Engraver.engravers.add(new Engraver(bufferedReader));
-                                if (bufferedReader == null) {
-                                    continue;
-                                }
-                                bufferedReader.close();
-                            }
-                            catch (Throwable t) {
-                                if (bufferedReader != null) {
-                                    try {
-                                        bufferedReader.close();
-                                    }
-                                    catch (Throwable exception) {
-                                        t.addSuppressed(exception);
-                                    }
-                                }
-                                throw t;
-                            }
+                Path paths = Path.of(Utilities.getResource(s).toURI());
+                try (Stream<Path> stream = Files.walk(paths, 2)) {
+                    for (Path path : stream.filter(file -> {
+                        Optional<String> extension = Utilities.getExtension(file);
+                        if (extension.isEmpty()) {
+                            return false;
                         }
+                        return (extension.get().equals("properties"));
+                    }).collect(Collectors.toSet())) {
+                        Properties p = new Properties();
+                        p.load(Files.newBufferedReader(path, StandardCharsets.UTF_8));
+                        BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+                        Engraver.engravers.add(new Engraver(bufferedReader));
+
                     }
-                    if (fileSystem != null) {
-                        fileSystem.close();
-                    }
-                }
-                catch (Throwable t2) {
-                    if (fileSystem != null) {
-                        try {
-                            fileSystem.close();
-                        }
-                        catch (Throwable exception2) {
-                            t2.addSuppressed(exception2);
-                        }
-                    }
-                    throw t2;
-                }
+                };
             }
+
             catch (IOException | NullPointerException | URISyntaxException | NumberFormatException ex) {
-                final Object o;
-                Engraver.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o));
+                Engraver.LOGGER.error(ex);
             }
         }
         return Engraver.engravers;
@@ -197,7 +167,8 @@ class Engraver implements Serializable
     
     @Override
     public String toString() {
-        return invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;, (this.name == null) ? invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, this.model) : this.name, (this.firmwareVersion == null) ? "" : invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, this.firmwareVersion));
+        return "" + ((this.name == null) ? this.model : this.name) + ((this.firmwareVersion == null) ? "" :
+                this.firmwareVersion);
     }
     
     @Override

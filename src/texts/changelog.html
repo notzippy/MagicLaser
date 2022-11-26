@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <style>
+      h2, h3 {
+        margin-bottom: 0px;
+      }
+      p {
+        margin-bottom: 0px;
+      }
+      ul {
+        margin-left: 10px;
+        margin-bottom: 0px;
+      }
+      li {
+        padding-left: 7px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Changelog</h2>
+    <h3>Magic Laser v2.1 (May 5, 2022)</h3>
+    <ul>
+      <li>Added ability to import SVG files as vectors (only paths, polygons, and polylines)</li>
+      <li>Added ability to import DXF files as vectors</li>
+      <li>Added a grid template vector to help position objects on the print surface</li>
+      <li>Added ability to set the canvas engraver without having to connect first</li>
+      <li>New top bar icons</li>
+      <li>Text entry font selection now shows font names in their own fonts</li>
+      <li>Changed project savefile extension from .xj to .mag</li>
+      <li>Associated .dxf and .svg files with the app</li>
+    </ul>
+    <h3>Magic Laser v2.0 (May 1, 2022)</h3>
+    <ul>
+      <li>WYSIWYG grid</li>
+      <li>WYSIWYG canvas object display order</li>
+      <li>WYSIWYG for both rasters and vectors on the canvas: engrave as they appear</li>
+      <li>New dynamic infobox to replace most floating object controls</li>
+      <li>New app icon, control icons, new versioning scheme</li>
+      <li>Switched to using the system theme and new font</li>
+      <li>Added pinch-to-zoom instead of scroll-to-zoom on Macs</li>
+      <li>Added scroll-to-pan on Macs, reversed zoom direction on non-Macs</li>
+      <li>Added Preview Print to preview exactly what will be engraved and in what order</li>
+      <li>Added a better grid background to see the 5mm boundaries</li>
+      <li>Added a pixel grid when zoomed in to see pixel boundaries for accuracy</li>
+      <li>Shift and Command/Control click/drag objects to add/remove to/from selection</li>
+      <li>Revamped text entry for higher resolution and better UI</li>
+      <li>Enabled Wi-Fi advertising on multiple interfaces and disabled on virtual ones</li>
+      <li>Enabled Wi-Fi button to reset the Wi-Fi connection and start over</li>
+      <li>Enabled live adjustment of ongoing Position Preview by moving canvas objects</li>
+      <li>Rewrote the Network and Serial code from scratch to be better</li>
+      <li>Enabled opening files "with" the app, file associations for .mag, .plt, .hpgl</li>
+      <li>Ability to manually enter rotation; more accurate and user-friendly rotation</li>
+      <li>Ability to view and restore to pct. of object's original size, fit-to-grid</li>
+      <li>Painted Outline-filtered rasters with the same blue as native vectors</li>
+      <li>Added a Cut option, better deletion code</li>
+      <li>Implemented update checking functionality</li>
+      <li>Added canvas zooming & object centering using menu/keyboard</li>
+      <li>Added Pause functionality for temporarily pausing a print without stopping it</li>
+      <li>Made Start/Pause/Stop buttons and status more responsive to user</li>
+      <li>Made inserting shapes reset the zoom and pan like file/text imports do</li>
+      <li>Allowed the Preview button, status to show the previewing state</li>
+      <li>Better canvas object representation (but makes old project files incompatible)</li>
+      <li>Added ability to move/resize/rotate objects with arrow keys</li>
+      <li>Made selection and selected boxes nicer</li>
+      <li>Allowed per-object vector filling density setting</li>
+      <li>Ability to mirror vectors and more sensical multi-object mirroring</li>
+      <li>Added almost every possible action to the menubar with keyboard shortcuts</li>
+      <li>Merged changes to base software, bringing it up to date to 1.1.5</li>
+      <li>Better-organized sidebar</li>
+      <li>Optimized the grayscale operation to be faster</li>
+      <li>Allowed entering nothing for a position/size box to not change that parameter</li>
+      <li>Allowed Undoing/Redoing position/size box changes</li>
+      <li>Disallowed negative or zero sizes in the size box</li>
+      <li>Allowed filter/mirror/invert/fill to work on multiple objects at a time</li>
+      <li>Enabled remembering import/export directories for next time</li>
+      <li>Better job runtime stopwatch</li>
+      <li>Better spec-conforming HPGL (PLT) parsing</li>
+      <li>Allowed opening multiple files using the import file chooser</li>
+      <li>Removed a defunct 67px offset, enabling a larger printable area</li>
+      <li>Limited zooming in and out to a reasonable level</li>
+      <li>Updated firmware download links and added ability to recognize bad links</li>
+      <li>Fixed overlapping grid numbers</li>
+      <li>Fixed bug where the Outline filter would shift object down and right</li>
+      <li>Fixed bug where copy + pasting an object doesn't deselect the original</li>
+      <li>Fixed bug where images were reprocessed after copy and paste, readability</li>
+      <li>Fixed PLT import: fit to grid, single object</li>
+      <li>Fixed star and heart to be the same size as the rest of the shapes</li>
+      <li>Fixed path optimization bug when inserting vector text</li>
+      <li>Fixed Comic filter</li>
+      <li>Fixed firmware updating on all Macs</li>
+      <li>Fixed serial connections on ARM Macs</li>
+      <li>Fixed engraving bug that would overflow the image to print</li>
+      <li>Localized interface before window opens to avoid flashing Chinese text</li>
+      <li>Removed BMP button</li>
+      <li>Removed the Reset Position button, moved function to the menu bar</li>
+      <li>Added Help menu, with Helptext, Changelog, and Logging
+    </ul>
+    <h3>Magic Laser v1.0 (September 3, 2021)</h3>
+    <ul>
+      <li>Ability to engrave over serial AND Wi-Fi without drivers on both Mac & Windows</li>
+      <li>Fixed IP address retrieval for Macs</li>
+      <li>Restored the Wi-Fi button to indicate (blue) when a Wi-Fi device is connected</li>
+      <li>Convert "Number of times" from dropdown menu to slider (up to 255x)</li>
+      <li>Fixed inability to scale objects on the canvas, integer division bugs</li>
+      <li>Added space between y-axis centimeter numbers and the top of the grid</li>
+      <li>Increased the zoom out on a new window so that the entire grid shows</li>
+      <li>Set window location to center, made it larger</li>
+      <li>Replaced period in timer with colon</li>
+      <li>Cleaned up menu bar and consolidated software update options</li>
+      <li>Fixed some UI spacing</li>
+      <li>Fixed translations</li>
+      <li>Fixed lack of zoom out when connected to device as grid is redrawn</li>
+      <li>Fixed zoom out when resolution is adjusted</li>
+      <li>Added Wi-Fi button tooltip with information</li>
+      <li>Enabled importing PLT that uses a comma as a separator</li>
+      <li>Fixed progress bar not showing upload status and calculation errors, added current action label</li>
+      <li>Fixed some coding fails</li>
+      <li>Added common tasks to menu bar, used Cmnd instead of Ctrl on Mac, replaced Redo shortcut</li>
+      <li>Fixed looking for network too much on initial broadcast</li>
+      <li>Implemented Wi-Fi network changing</li>
+      <li>Restored "Reset View" functionality</li>
+      <li>Weakened default preview power for Wainlux K6</li>
+      <li>Fixed top button spacing and order</li>
+      <li>Set minimum possible size for window</li>
+      <li>Reversed mouse scroll zoom direction</li>
+      <li>Stopped auto update check pop-up on every start</li>
+      <li>Overhauled positioning system</li>
+      <li>Stopped grid drawing code from being called 4 times</li>
+      <li>Prettified grid numbers, fixed resolution dropdown, centralized grid drawing</li>
+      <li>Unified file import, reset zoom on import, canvas info in savefile</li>
+      <li>Disabled resolution selector for Wainlux K6 since it only does High</li>
+    </ul>
+  </body>
+</html>

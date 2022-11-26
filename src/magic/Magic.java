@@ -212,7 +212,7 @@ public class Magic extends JFrame
         this.fu_zhi = false;
         this.ty_fu_zhi = new ArrayList<CanvasObject>();
         this.shi_zi = false;
-        System.setProperty("log4j.configurationFile", "logging/log4j2.properties");
+        // TODO System.setProperty("log4j.configurationFile", "logging/log4j2.properties");
         Magic.LOGGER = LogManager.getLogger();
         this.level = this.getLoggingLevel();
         Configurator.setAllLevels(LogManager.getRootLogger().getName(), this.level);
@@ -221,8 +221,7 @@ public class Magic extends JFrame
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex2) {
-            final Object o;
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o));
+            Magic.LOGGER.error( "UI Failure", ex2);
         }
         boolean b = false;
         final Locale default1 = Locale.getDefault();
@@ -264,8 +263,7 @@ public class Magic extends JFrame
                 }
             }
             catch (FontFormatException | IOException ex3) {
-                final Object o2;
-                Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o2));
+                Magic.LOGGER.error("App font error", ex3);
                 Magic.abstractFont = new Font("\u5b8b\u4f53", 0, 14);
             }
         }
@@ -487,16 +485,14 @@ public class Magic extends JFrame
             this.canvas = new Canvas(new Engraver(Utilities.getPreferences().getInt("canvas.engraver", 6)), Utilities.getPreferences().getInt("canvas.resolutionIndex", 0));
         }
         catch (IOException | NumberFormatException | NullPointerException ex20) {
-            final Object o3;
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o3));
+            Magic.LOGGER.error("Canvas Failure",ex20);
             Utilities.getPreferences().remove("canvas.engraver");
             Utilities.getPreferences().remove("canvas.resolutionIndex");
             try {
                 this.canvas = new Canvas(new Engraver(6), 0);
             }
             catch (IOException | NumberFormatException | NullPointerException ex21) {
-                final Object o4;
-                Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, o4));
+                Magic.LOGGER.error("Second Canvas Engraver Failure", ex21);
             }
         }
         final JPanel component = new JPanel();
@@ -510,7 +506,10 @@ public class Magic extends JFrame
         this.prejobSettingsSubpanel.setLayout(layout);
         this.prejobSettingsSubpanel.setBorder(border);
         (this.resolutionLabel = new JLabel(Magic.str_precision)).setEnabled(false);
-        (this.resolutionDropdown = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] { invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, this.canvas.grid.engraver.resolutionHigh), invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, this.canvas.grid.engraver.resolutionMedium), invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, this.canvas.grid.engraver.resolutionLow) }))).setSelectedIndex(0);
+        (this.resolutionDropdown = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] {
+                "" + this.canvas.grid.engraver.resolutionHigh,
+                ""+this.canvas.grid.engraver.resolutionMedium,
+                ""+ this.canvas.grid.engraver.resolutionLow }))).setSelectedIndex(0);
         this.resolutionDropdown.setEnabled(false);
         this.resolutionDropdown.addActionListener(p0 -> this.resolutionChanged());
         (this.previewPowerLabel = new JLabel(Magic.str_weak_light)).setEnabled(false);
@@ -650,13 +649,13 @@ public class Magic extends JFrame
         layout5.setVerticalGroup(layout5.createSequentialGroup().addContainerGap().addGroup(layout5.createParallelGroup().addGroup(layout5.createSequentialGroup().addComponent(button).addComponent(label)).addGroup(layout5.createSequentialGroup().addComponent(button2).addComponent(label2)).addGroup(layout5.createSequentialGroup().addComponent(button3).addComponent(label3)).addGroup(layout5.createSequentialGroup().addComponent(button4).addComponent(label4)).addGroup(layout5.createSequentialGroup().addComponent(button5).addComponent(label5)).addGroup(layout5.createSequentialGroup().addComponent(button6).addComponent(label6)).addGroup(layout5.createSequentialGroup().addComponent(button7).addComponent(label7)).addGroup(layout5.createSequentialGroup().addComponent(button8).addComponent(label8)).addGroup(layout5.createSequentialGroup().addComponent(button9).addComponent(label9)).addGroup(layout5.createSequentialGroup().addComponent(this.previewPositionButton).addComponent(this.previewPositionLabel)).addGroup(layout5.createSequentialGroup().addComponent(this.startPauseResumePrintButton).addComponent(this.startPauseResumePrintLabel)).addGroup(layout5.createSequentialGroup().addComponent(this.stopPrintButton).addComponent(this.stopPrintLabel)).addGroup(layout5.createSequentialGroup().addComponent(this.wifiButton).addComponent(label10)).addGroup(layout5.createSequentialGroup().addComponent(this.usbButton).addComponent(label11))).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(layout5.createParallelGroup().addComponent(component, -1, -1, 32767).addComponent(this.canvas, -1, -1, 32767)).addGroup(layout5.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(this.progressBar, -2, -1, -2).addComponent(this.stopwatch).addComponent(this.statusLabel)));
         this.cai_dan();
         this.setDefaultCloseOperation(3);
-        Magic.title = invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Magic.str_laser);
-        this.setTitle(Magic.disconnectedTitle = invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Magic.title));
+        Magic.title = Magic.str_laser;
+        this.setTitle(Magic.disconnectedTitle =  Magic.title);
         try {
             this.setIconImage(ImageIO.read(Utilities.getResource("/images/icon.png")));
         }
         catch (IOException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error("Icon Image error", ex);
         }
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -676,9 +675,9 @@ public class Magic extends JFrame
             this.fileTransferHandler.openFile(new File(array[i]));
         }
         if (Utilities.getOS() == Utilities.OS.MAC) {
-            final Iterator<File> iterator;
+
             Desktop.getDesktop().setOpenFileHandler(openFilesEvent -> {
-                openFilesEvent.getFiles().iterator();
+                final Iterator<File> iterator = openFilesEvent.getFiles().iterator();
                 while (iterator.hasNext()) {
                     this.fileTransferHandler.openFile(iterator.next());
                 }
@@ -799,19 +798,18 @@ public class Magic extends JFrame
         c2.add(menuItem7);
         final JMenuItem menuItem8 = new JMenuItem(Magic.str_paste);
         menuItem8.setAccelerator(KeyStroke.getKeyStroke(86, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        final Iterator<CanvasObject> iterator;
-        Vector vector;
+
         menuItem8.addActionListener(p0 -> {
             if (this.fu_zhi) {
                 this.canvas.deselectAll();
-                this.ty_fu_zhi.iterator();
+                final Iterator<CanvasObject> iterator = this.ty_fu_zhi.iterator();
                 while (iterator.hasNext()) {
-                    vector = (Vector)iterator.next();
+                    CanvasObject vector = iterator.next();
                     if (vector instanceof Raster) {
                         this.canvas.pasteToCanvas(new Raster((Raster)vector));
                     }
                     else {
-                        this.canvas.pasteToCanvas(new Vector(vector));
+                        this.canvas.pasteToCanvas(new Vector((Vector) vector));
                     }
                 }
                 this.canvas.repaint();
@@ -998,9 +996,9 @@ public class Magic extends JFrame
         menuItem22.add(menuItem27);
         final JMenuItem menuItem28 = new JMenuItem("Scale to Fit Grid");
         menuItem28.setAccelerator(KeyStroke.getKeyStroke(71, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        final Rectangle rectangle;
+
         menuItem28.addActionListener(p0 -> {
-            this.canvas.grid.getBounds();
+            final Rectangle rectangle = this.canvas.grid.getBounds();
             if (this.canvas.scaleToBoundsSelected(rectangle.width, rectangle.height)) {
                 this.canvas.centerSelected();
                 this.canvas.repaint();
@@ -1214,10 +1212,10 @@ public class Magic extends JFrame
         menuItem54.addActionListener(p0 -> SoftwareUpdate.update_mod((boolean)(0 != 0)));
         c6.add(menuItem54);
         final JMenuItem menuItem55 = new JMenuItem(Magic.str_firmware);
-        FirmwareUpdate firmwareUpdate;
+
         menuItem55.addActionListener(p0 -> {
             if (this.connection != null && this.connection instanceof SerialConnection && this.connection.connectionState == Connection.ConnectionState.CONNECTED) {
-                firmwareUpdate = new FirmwareUpdate((SerialConnection)this.connection);
+                FirmwareUpdate firmwareUpdate = new FirmwareUpdate((SerialConnection)this.connection);
             }
             else {
                 Magic.LOGGER.warn(Magic.str_connect_first);
@@ -1274,19 +1272,19 @@ public class Magic extends JFrame
     }
     
     private void openLog() {
-        final String fileName = ((org.apache.logging.log4j.core.Logger)Magic.LOGGER).getAppenders().get("fileLogger").getFileName();
+        final String fileName = ((org.apache.logging.log4j.core.appender.FileAppender)((org.apache.logging.log4j.core.Logger)Magic.LOGGER).getAppenders().get("fileLogger")).getFileName();
         try {
             final Desktop desktop = Desktop.getDesktop();
             if (Desktop.isDesktopSupported() && desktop.isSupported(Desktop.Action.OPEN)) {
-                Magic.LOGGER.warn(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, fileName));
+                Magic.LOGGER.warn(fileName);
                 desktop.open(new File(fileName));
             }
             else {
-                Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, fileName));
+                Magic.LOGGER.error(fileName);
             }
         }
         catch (Exception ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1327,7 +1325,7 @@ public class Magic extends JFrame
             this.connection.stopPrint(false);
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1380,7 +1378,7 @@ public class Magic extends JFrame
                         this.connection.pausePrint();
                     }
                     catch (Connection.EngraverUnreadyException ex) {
-                        Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+                        Magic.LOGGER.error(ex);
                     }
                     break;
                 }
@@ -1392,7 +1390,7 @@ public class Magic extends JFrame
                         this.connection.resumePrint();
                     }
                     catch (Connection.EngraverUnreadyException ex2) {
-                        Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex2));
+                        Magic.LOGGER.error(ex2);
                     }
                     break;
                 }
@@ -1424,7 +1422,7 @@ public class Magic extends JFrame
             }
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1507,7 +1505,7 @@ public class Magic extends JFrame
             this.connection.adjustPowerDepth(n, value);
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1518,7 +1516,7 @@ public class Magic extends JFrame
             this.connection.adjustPowerDepth(n, value);
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1536,7 +1534,7 @@ public class Magic extends JFrame
             this.connection.setPreviewPowerResolution(n, selectedIndex);
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1566,14 +1564,14 @@ public class Magic extends JFrame
                 final JLabel comp2 = new JLabel(new ImageIcon(compositeRasterImage));
                 comp2.setBorder(border);
                 view.add(comp2);
-                Magic.LOGGER.info(invokedynamic(makeConcatWithConstants:(II)Ljava/lang/String;, compositeRasterImage.getWidth(), compositeRasterImage.getHeight()));
+                Magic.LOGGER.info("Rasters stage 1",compositeRasterImage.getWidth(), compositeRasterImage.getHeight());
             }
             if (compositeVectorOutlineImage != null) {
                 final TitledBorder border2 = new TitledBorder(matteBorder, "Vector Outlines, Stage 2", 1, 2);
                 final JLabel comp3 = new JLabel(new ImageIcon(compositeVectorOutlineImage));
                 comp3.setBorder(border2);
                 view.add(comp3);
-                Magic.LOGGER.info(invokedynamic(makeConcatWithConstants:(II)Ljava/lang/String;, compositeVectorOutlineImage.getWidth(), compositeVectorOutlineImage.getHeight()));
+                Magic.LOGGER.info("Vector outlines stage 2", compositeVectorOutlineImage.getWidth(), compositeVectorOutlineImage.getHeight());
             }
             if (compositeVectorFillingImage != null) {
                 final TitledBorder border3 = new TitledBorder(matteBorder, "Vector Fillings, Stage 3", 1, 2);
@@ -1582,7 +1580,7 @@ public class Magic extends JFrame
                 final JLabel comp4 = new JLabel(new ImageIcon(compositeVectorFillingImage));
                 comp4.setBorder(border3);
                 view.add(comp4);
-                Magic.LOGGER.info(invokedynamic(makeConcatWithConstants:(II)Ljava/lang/String;, compositeVectorFillingImage.getWidth(), compositeVectorFillingImage.getHeight()));
+                Magic.LOGGER.info("Vector Fillings Stage 3", compositeVectorFillingImage.getWidth(), compositeVectorFillingImage.getHeight());
             }
             frame.getContentPane().add(comp);
             frame.pack();
@@ -1605,7 +1603,7 @@ public class Magic extends JFrame
             }
         }
         catch (Connection.EngraverUnreadyException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Lmagic/Connection$EngraverUnreadyException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
         this.shi_zi = !this.shi_zi;
     }
@@ -1636,10 +1634,6 @@ public class Magic extends JFrame
             Utilities.error("Engraver Busy", "Can't change engraver's Wi-Fi settings when it's busy. Try again when it's idle.");
         }
         else {
-            ArrayList<String> elements;
-            final String cs;
-            final String cs2;
-            final String s;
             new Thread(() -> {
                 try {
                     if (!this.connection.stopPreview().get()) {
@@ -1649,9 +1643,9 @@ public class Magic extends JFrame
                         throw new Exception("Engraver did not respond to Stop Print.");
                     }
                     else {
-                        this.wifiNetworkField.getText();
-                        this.wifiPasswordField.getText();
-                        elements = new ArrayList<String>();
+                        String cs = this.wifiNetworkField.getText();
+                        String cs2 = this.wifiPasswordField.getText();
+                        ArrayList<String> elements = new ArrayList<String>();
                         if (cs.length() > 32) {
                             elements.add("The Wi-Fi network name must be 32 characters or less.");
                         }
@@ -1668,8 +1662,8 @@ public class Magic extends JFrame
                             elements.add("The Wi-Fi password can only have ASCII characters (no special Unicode possible).");
                         }
                         if (!elements.isEmpty()) {
-                            String.join("\n", elements);
-                            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, s));
+                            String s = String.join("\n", elements);
+                            Magic.LOGGER.error(s);
                             SwingUtilities.invokeLater(() -> Utilities.error("Wi-Fi setting error(s)", s));
                         }
                         else {
@@ -1680,7 +1674,7 @@ public class Magic extends JFrame
                     }
                 }
                 catch (Exception ex) {
-                    Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+                    Magic.LOGGER.error(ex);
                     SwingUtilities.invokeLater(() -> Utilities.error("Couldn't send Wi-Fi information", ex.getMessage()));
                 }
             }, "Set Wi-Fi Settings").start();
@@ -1712,7 +1706,7 @@ public class Magic extends JFrame
                     }
                 }
                 catch (Exception ex) {
-                    Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
+                    Magic.LOGGER.error(ex);
                     SwingUtilities.invokeLater(() -> Utilities.error("Couldn't send Wi-Fi reset", ex.getMessage()));
                 }
             }, "Reset Wi-Fi to Hotspot").start();
@@ -1813,10 +1807,12 @@ public class Magic extends JFrame
                 }
                 for (int n7 = 0; n7 < 5 && !this.connection.sendPrintChunk(array3).get(); ++n7) {
                     if (n7 == 4) {
-                        throw new Exception(invokedynamic(makeConcatWithConstants:(I)Ljava/lang/String;, l + 1));
+                        throw new Exception("" + (l + 1));
                     }
                 }
-                SwingUtilities.invokeLater(() -> this.progressBar.setValue((int)((l * n4 + n5) / (double)array.length * 100.0)));
+                int finalL = l;
+                int finalN = n5;
+                SwingUtilities.invokeLater(() -> this.progressBar.setValue((int)((finalL * n4 + finalN) / (double)array.length * 100.0)));
             }
             SwingUtilities.invokeLater(() -> this.statusLabel.setText("Uploaded"));
             Thread.sleep(200L);
@@ -1828,11 +1824,10 @@ public class Magic extends JFrame
         }
         catch (Exception ex) {
             this.connection.engraverState = Connection.EngraverState.IDLE;
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/lang/Exception;)Ljava/lang/String;, ex));
-            final Throwable t;
+            Magic.LOGGER.error(ex);
             SwingUtilities.invokeLater(() -> {
                 this.updateFrameEngraverState();
-                Utilities.error("Couldn't start print", t.getMessage());
+                Utilities.error("Couldn't start print", ex.getMessage());
             });
         }
     }
@@ -1875,7 +1870,7 @@ public class Magic extends JFrame
             }
         }
         catch (IOException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1917,7 +1912,7 @@ public class Magic extends JFrame
             }
         }
         catch (IOException ex) {
-            Magic.LOGGER.error(invokedynamic(makeConcatWithConstants:(Ljava/io/IOException;)Ljava/lang/String;, ex));
+            Magic.LOGGER.error(ex);
         }
     }
     
@@ -1977,7 +1972,7 @@ public class Magic extends JFrame
                 break;
             }
             case FIRMWARE: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;, Magic.title));
+                this.setTitle(Magic.title);
                 this.resetPositionItem.setEnabled(false);
                 this.startPauseResumePrintButton.setSelected(false);
                 this.startPauseResumePrintButton.setEnabled(false);
@@ -2029,7 +2024,7 @@ public class Magic extends JFrame
                 break;
             }
             case IDLE: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Lmagic/Engraver;)Ljava/lang/String;, Magic.title, this.connection.engraver));
+                this.setTitle(Magic.title + this.connection.engraver.toString());
                 this.resetPositionItem.setEnabled(this.connection.engraver.resetEnabled);
                 this.startPauseResumePrintButton.setSelected(false);
                 this.startPauseResumePrintButton.setEnabled(true);
@@ -2080,7 +2075,7 @@ public class Magic extends JFrame
                 break;
             }
             case PREVIEWING: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Lmagic/Engraver;)Ljava/lang/String;, Magic.title, this.connection.engraver));
+                this.setTitle(Magic.title + this.connection.engraver.toString());
                 this.resetPositionItem.setEnabled(true);
                 this.startPauseResumePrintButton.setSelected(false);
                 this.startPauseResumePrintButton.setEnabled(true);
@@ -2131,7 +2126,7 @@ public class Magic extends JFrame
                 break;
             }
             case UPLOADING: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Lmagic/Engraver;)Ljava/lang/String;, Magic.title, this.connection.engraver));
+                this.setTitle(Magic.title +  this.connection.engraver.toString());
                 this.resetPositionItem.setEnabled(false);
                 this.startPauseResumePrintButton.setSelected(false);
                 this.startPauseResumePrintButton.setEnabled(false);
@@ -2183,7 +2178,7 @@ public class Magic extends JFrame
                 break;
             }
             case PRINTING: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Lmagic/Engraver;)Ljava/lang/String;, Magic.title, this.connection.engraver));
+                this.setTitle(Magic.title +  this.connection.engraver.toString());
                 this.resetPositionItem.setEnabled(false);
                 this.startPauseResumePrintButton.setSelected(true);
                 this.startPauseResumePrintButton.setEnabled(true);
@@ -2234,7 +2229,7 @@ public class Magic extends JFrame
                 break;
             }
             case PAUSED: {
-                this.setTitle(invokedynamic(makeConcatWithConstants:(Ljava/lang/String;Lmagic/Engraver;)Ljava/lang/String;, Magic.title, this.connection.engraver));
+                this.setTitle(Magic.title +  this.connection.engraver.toString());
                 this.resetPositionItem.setEnabled(false);
                 this.startPauseResumePrintButton.setSelected(false);
                 this.startPauseResumePrintButton.setEnabled(true);
@@ -2389,7 +2384,8 @@ public class Magic extends JFrame
     
     void updateFrameEngraver(final Engraver engraver, final int selectedIndex) {
         this.canvas.setEngraver(engraver);
-        this.resolutionDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, engraver.resolutionHigh), invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, engraver.resolutionMedium), invokedynamic(makeConcatWithConstants:(D)Ljava/lang/String;, engraver.resolutionLow) }));
+        this.resolutionDropdown.setModel(new DefaultComboBoxModel<String>(new String[] { "" + engraver.resolutionHigh,
+                "" +  engraver.resolutionMedium, "" + engraver.resolutionLow }));
         this.resolutionDropdown.setSelectedIndex(selectedIndex);
         if (engraver.previewPositionEnabled) {
             this.previewPowerSlider.setValue(engraver.previewPower);
